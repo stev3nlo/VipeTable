@@ -80,19 +80,24 @@ public class VipeTableLogic {
     }
     private void deleteFile(int fileID) {
             //removes the file from the directory and calls writeGrid()
-        for (int i = 599; i >= 0; i--) {
-            if (dir.getFile().get(i).getFileID() == fileID) {
-                dir.sectors[i] = 0;
-            }
-        }
+//        for (int i = 599; i >= 0; i--) {
+//            if (dir.getFile().get(i).getFileID() == fileID) {
+//                dir.sectors[i] = 0;
+//            }
+//        }
         int index = 0;
         int i = 0;
-        for (VipeFile file : dir.getFile()) {
-            if (file.getFileID() == fileID) {
-                index = i;
+        if (dir.getFile().size() > 1)
+            for (VipeFile file : dir.getFile()) {
+                if (file.getFileID() == fileID) {
+                    index = i;
+                    dir.file.remove(index);
+                }
+            for (int sector : sectors)
+                i++;
             }
-            i++;
-        }
+        else
+            dir.file.remove(index);
     }
     private void editFile(int fileID, int sectorChange) {
             //adds or removes sectors from the file
@@ -127,7 +132,8 @@ public class VipeTableLogic {
         //throw new UnsupportedOperationException("Not supported yet.");
         //To change body of generated methods, choose Tools | Templates.
         Scanner keyboard = new Scanner(System.in);
-        System.out.println("DELETE FILE: \nEnter FILE NAME: ");
+        System.out.println("DELETE FILE: \nEnter FILE ID: ");
+        deleteFile(Integer.parseInt(keyboard.next()));
     }
 
     private void editData() {
