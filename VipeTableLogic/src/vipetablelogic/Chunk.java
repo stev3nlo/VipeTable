@@ -43,7 +43,7 @@ public class Chunk {
         * [0-6]
         */
         
-        // TODO: Code string output for chunk class
+        //string output for chunk class
         return "[" + startIndex + "-" + endIndex + "]";
     }
 }

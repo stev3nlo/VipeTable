@@ -87,7 +87,8 @@ public class VipeFile {
         1 Quiz.doc (Red, 15s)
             [0-6] [12-18] [39-40]
     */
-        return fileID + fileName + "(" + sectorColor + "," + fileSize + "s" + "/n   " + getChunkString();
+        return fileID + fileName + "(" + sectorColor + "," + fileSize + "s" +
+        "/n   " + getChunkString();
     }
     
     public String getChunkString() {

@@ -73,5 +73,7 @@ public class Directory {
                 }
             }
         }
+        file.setChunks(files);
+        this.file.add(file);
     }
 }

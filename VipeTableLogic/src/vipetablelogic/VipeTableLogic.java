@@ -37,7 +37,8 @@ public class VipeTableLogic {
                 case 2 : writeData(); break;
                 case 3 : deleteData(); break;
                 case 4 : editData(); break;
-        }
+            }
+            System.out.println(dir);
         }
     }
     
@@ -69,36 +70,29 @@ public class VipeTableLogic {
     }
     private void writeFile(VipeFile file) {
             //writes file to the directory’s sector array
-        //ArrayList<VipeFile> files = dir.getFile();
-        //if (file.getFileSize() > 0) {
-        //    int i = 0;
-        //    int startIndex = 0;
-        //    int endIndex = 0;
-        //    Chunk chunk = new Chunk(0,0);
-        //    int chunkSize = startIndex - endIndex;
-        
-        //    while (i < file.getFileSize()) {
-        //        chunk = getNextChunk();
-        //        startIndex = chunk.getStartIndex();
-        //        endIndex = chunk.getEndIndex();
-        //        while (startIndex <= endIndex && i < file.getFileSize()) {
-        //            dir.sectors[startIndex] = file.getFileID();
-        //            i++;
-        //            startIndex++;
-        //        }
-        //        if ((i + chunkSize) < file.getFileSize())
-        //            while ((i + chunkSize) > file.getFileSize())
-        //                dir.file.get(i).setChunks(chunk);
-        //    }
         String name = file.getFileName();
         int size = file.getFileSize();
         addFile(name, size);
     }
     private void writeGrid() {
             //creates the 2DGraphic representation of the directory
+        System.out.println(dir);
     }
     private void deleteFile(int fileID) {
             //removes the file from the directory and calls writeGrid()
+        for (int i = 599; i >= 0; i--) {
+            if (dir.getFile().get(i).getFileID() == fileID) {
+                dir.sectors[i] = 0;
+            }
+        }
+        int index = 0;
+        int i = 0;
+        for (VipeFile file : dir.getFile()) {
+            if (file.getFileID() == fileID) {
+                index = i;
+            }
+            i++;
+        }
     }
     private void editFile(int fileID, int sectorChange) {
             //adds or removes sectors from the file
@@ -113,11 +107,13 @@ public class VipeTableLogic {
     }
 
     private void importData() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet.");
+        //To change body of generated methods, choose Tools | Templates.
     }
 
     private void writeData() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet.");
+        //To change body of generated methods, choose Tools | Templates.
         Scanner keyboard = new Scanner(System.in);
         System.out.println("WRITE FILE: \nEnter FILE NAME: ");
         String name = keyboard.next();
@@ -128,15 +124,20 @@ public class VipeTableLogic {
     }
 
     private void deleteData() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet.");
+        //To change body of generated methods, choose Tools | Templates.
+        Scanner keyboard = new Scanner(System.in);
+        System.out.println("DELETE FILE: \nEnter FILE NAME: ");
     }
 
     private void editData() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet.");
+        //To change body of generated methods, choose Tools | Templates.
     }
 
     private int getNextID() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet.");
+        //To change body of generated methods, choose Tools | Templates.
         //loop through files aray and find max value
         int max = 0;
         
