@@ -40,6 +40,10 @@ public class VipeFile {
     public ArrayList<Chunk> getChunks() {
         return chunks;
     }
+    
+    public Chunk getChunk(int i) {
+        return chunks.get(i);
+    }
 
     public int getFileSize() {
         return fileSize;

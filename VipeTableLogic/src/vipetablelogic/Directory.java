@@ -76,4 +76,27 @@ public class Directory {
         file.setChunks(files);
         this.file.add(file);
     }
+    
+    public void deleteFile(int ID) {
+        for (int i = 0; i < sectors.length; i++) {
+            if (sectors[i] == ID) {
+                sectors[i] = 0;
+            }
+        }
+    }
+    
+    public void editFile(int ID, int size) {
+        int overflow = 0;
+        for (int i = 0; i < file.size(); i++) {
+            if (file.get(i).getFileID() == ID) {
+                return;
+            }
+            if (file.get(i).getFileSize() > size) {
+                overflow = file.get(i).getFileSize() - size;
+                for (int j = 0; j < overflow; j++) {
+                    sectors[file.get(i).getChunk(0).getStartIndex() + j] = 0;
+                }
+            }
+        }
+    }
 }
