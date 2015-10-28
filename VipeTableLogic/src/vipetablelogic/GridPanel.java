@@ -10,22 +10,22 @@ import javax.swing.JPanel;
  *
  * @author Steven
  */
-public class GridPanel extends JPanel {
+public class GridPanel extends javax.swing.JPanel {
     
     private int[] sectors = new int[600];
     
     private void initializeSectors() {
     //add values to the sectors array
-        for (int i = 0; i < 150; i++) {
+        for (int i = 0; i < 100; i++) {
             sectors[i] = 1;
         }
-        for (int i = 150; i < 300; i++) {
+        for (int i = 100; i < 200; i++) {
             sectors[i] = 2;
         }
-        for (int i = 300; i < 450; i++) {
+        for (int i = 200; i < 300; i++) {
             sectors[i] = 3;
         }
-        for (int i = 450; i < 600; i++) {
+        for (int i = 300; i < 400; i++) {
             sectors[i] = 4;
         }
     }
@@ -49,12 +49,21 @@ public class GridPanel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D graphics = (Graphics2D) g;
-        initializeSectors();
         int spot = 0;
-        for (int c = 0; c < 30; c++) {
-            for (int r = 0; r < 20; r++) {
-                    graphics.setColor(getColor(sectors[(r * 20) + c]));
-                    graphics.fillRect(c * 20, r * 20, 20, 20);
+        String output = "";
+        for (int c = 0; c < 20; c++) {
+            for (int r = 0; r < 30; r++) {
+                    graphics.setColor(getColor(sectors[(c * 30) + r]));
+                    graphics.fillRect(r * 20, c * 20, 20, 20);
+                    if (sectors[spot] == 0) {
+                        output = "";
+                    }
+                    else {
+                        output = sectors[spot] + "";
+                    }
+                    graphics.setColor(new Color(0, 0, 0));
+                    graphics.drawString(output, r * 20 + 7, c * 20 + 15);
+                    spot++;
             }
         }
         
@@ -62,9 +71,17 @@ public class GridPanel extends JPanel {
         for (int i = 0; i < 30; i++) {
             graphics.drawLine(i * 20, 0, i * 20, 400);
         }
+        for (int i = 0; i < 20; i++) {
+            graphics.drawLine(0, i  *20, 600, i * 20);
+        }
         
         
 //        graphics.setColor(Color.red);
 //        graphics.fillRect(50, 50, 100, 100);
+    }
+    
+    private void updateGrid(int[] sectors) {
+        this.sectors = sectors;
+        repaint();
     }
 }

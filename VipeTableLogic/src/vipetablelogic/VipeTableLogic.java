@@ -21,7 +21,7 @@ public class VipeTableLogic {
     Scanner keyboard = new Scanner(System.in);
     
     public VipeTableLogic() {
-        dir = new Directory(new ArrayList<VipeFile>(), new int[600]);
+        dir = new Directory(new ArrayList<VipeFile>(), new int[601]);
         
         while (true) {
             System.out.println("VipeTable Functions:");
@@ -44,7 +44,7 @@ public class VipeTableLogic {
     
     private String getChunkString(int fileID) {
             //returns a String representation of a file’s chunks
-        ArrayList<VipeFile> file = dir.file;
+        ArrayList<VipeFile> file = dir.files;
         return file.get(fileID).getChunkString();
     }
     private int getAvailableSize() {
@@ -80,13 +80,8 @@ public class VipeTableLogic {
     }
     private void deleteFile(int fileID) {
             //removes the file from the directory and calls writeGrid()
-        dir.deleteFile(new Integer(fileID));
+        dir.deleteFile(fileID);
     }
-    
-    private void editFile(int fileID, int sectorChange) {
-            //adds or removes sectors from the file
-        dir.editFile(fileID, sectorChange);
-}
 
     /**
      * @param args the command line arguments
@@ -125,7 +120,7 @@ public class VipeTableLogic {
         //throw new UnsupportedOperationException("Not supported yet.");
         //To change body of generated methods, choose Tools | Templates.
         Scanner keyboard = new Scanner(System.in);
-        System.out.println(dir.file.toString());
+        System.out.println(dir.files.toString());
         System.out.println("EDIT FILE: \nEnter FILE ID: ");
         int id = keyboard.nextInt();
         System.out.println("Enter Sector Changed: ");
@@ -139,7 +134,7 @@ public class VipeTableLogic {
         //loop through files aray and find max value
         int max = 0;
         
-        for (VipeFile file: dir.file) {
+        for (VipeFile file: dir.files) {
             if (file.getFileID() > max)
                 max = file.getFileID();
         }
@@ -149,5 +144,10 @@ public class VipeTableLogic {
     private void addFile(String name, int size) {
         Color color = new Color(255, 255, 255);
         dir.addFile(new VipeFile(size, name, color, getNextID()));
+    }
+    
+    private void editFile(int fileID, int sectorChange) {
+            //adds or removes sectors from the file
+        dir.editFile(sectorChange, fileID);
     }
 }

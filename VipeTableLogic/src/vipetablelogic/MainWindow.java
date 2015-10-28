@@ -5,19 +5,86 @@
  */
 package vipetablelogic;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.Scanner;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Steven
  */
 public class MainWindow extends javax.swing.JFrame {
-
+    int[] sectors = new int[600];
+    private Directory dir;
+    Scanner keyboard = new Scanner(System.in);
     /**
      * Creates new form MainWindow
      */
     public MainWindow() {
         initComponents();
+        dir = new Directory(new ArrayList<VipeFile>(), new int[601]);
     }
-
+    
+    private String getChunkString(int fileID) {
+            //returns a String representation of a file’s chunks
+        ArrayList<VipeFile> file = dir.files;
+        return file.get(fileID).getChunkString();
+    }
+    
+    private int getAvailableSize() {
+            //returns the total number of unmarked sectors
+        int unmarked = 0;
+        for (int sector: dir.getSectors())
+            if (sector == 0)
+                unmarked++;
+        return unmarked;
+    }
+    private Chunk getNextChunk() {
+        int start = -1;
+        int end = 0;
+            //returns the next available chunk
+        for (int i = 0; i < dir.sectors.length; i++)
+            if (start == -1)
+                if (dir.sectors[i] == 0)
+                    start = i;
+            else
+                if (dir.sectors[i] != 0)
+                    end = i - 1;
+        return new Chunk(start, end);
+    }
+    
+    private int getNextID() {
+        //throw new UnsupportedOperationException("Not supported yet.");
+        //To change body of generated methods, choose Tools | Templates.
+        //loop through files aray and find max value
+        int max = 0;
+        
+        for (VipeFile file: dir.files) {
+            if (file.getFileID() > max)
+                max = file.getFileID();
+        }
+    return max + 1;
+    }
+    
+    private void addFile(String name, int size) {
+        Color color = new Color(255, 255, 255);
+        dir.addFile(new VipeFile(size, name, color, getNextID()));
+    }
+    
+    private void editFile(int fileID, int sectorChange) {
+            //adds or removes sectors from the file
+        dir.editFile(sectorChange, fileID);
+    }
+    
+        private void deleteFile(int fileID) {
+            //removes the file from the directory and calls writeGrid()
+        dir.deleteFile(new Integer(fileID));
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -30,14 +97,33 @@ public class MainWindow extends javax.swing.JFrame {
         jMenuBar2 = new javax.swing.JMenuBar();
         jMenu3 = new javax.swing.JMenu();
         jMenu4 = new javax.swing.JMenu();
-        jPanel1 = new javax.swing.JPanel();
+        addDialog = new javax.swing.JDialog();
+        jLabel5 = new javax.swing.JLabel();
+        addDialog_fileNameTextField = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        addDialog_fileSizeTextField = new javax.swing.JTextField();
+        addDialog_addFileButton = new javax.swing.JButton();
+        addDialog_cancelButton = new javax.swing.JButton();
+        delDialog = new javax.swing.JDialog();
+        delDialog_fileNameTextField = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        delDialog_delFileButton = new javax.swing.JButton();
+        delDialog_cancelButton = new javax.swing.JButton();
+        editDialog = new javax.swing.JDialog();
+        editDialog_fileSizeTextField = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        editDialog_fileNameTextField = new javax.swing.JTextField();
+        editDialog_editFileButton = new javax.swing.JButton();
+        editDialog_cancelButton = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        jPanel1 = new GridPanel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        add = new javax.swing.JButton();
+        del = new javax.swing.JButton();
+        edit = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -55,6 +141,186 @@ public class MainWindow extends javax.swing.JFrame {
 
         jMenu4.setText("Edit");
         jMenuBar2.add(jMenu4);
+
+        addDialog.setMaximumSize(new java.awt.Dimension(400, 300));
+        addDialog.setMinimumSize(new java.awt.Dimension(400, 300));
+        addDialog.setPreferredSize(new java.awt.Dimension(400, 300));
+        addDialog.setResizable(false);
+
+        jLabel5.setText("File Name");
+
+        jLabel6.setText("File Size");
+
+        addDialog_addFileButton.setText("Add File");
+        addDialog_addFileButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addDialog_addFileButtonActionPerformed(evt);
+            }
+        });
+
+        addDialog_cancelButton.setText("Cancel");
+        addDialog_cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addDialog_cancelButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout addDialogLayout = new javax.swing.GroupLayout(addDialog.getContentPane());
+        addDialog.getContentPane().setLayout(addDialogLayout);
+        addDialogLayout.setHorizontalGroup(
+            addDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(addDialogLayout.createSequentialGroup()
+                .addGap(60, 60, 60)
+                .addGroup(addDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(addDialogLayout.createSequentialGroup()
+                        .addGroup(addDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
+                        .addGap(26, 26, 26)
+                        .addGroup(addDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(addDialog_fileNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(addDialog_fileSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(addDialogLayout.createSequentialGroup()
+                        .addComponent(addDialog_addFileButton)
+                        .addGap(32, 32, 32)
+                        .addComponent(addDialog_cancelButton)))
+                .addContainerGap(131, Short.MAX_VALUE))
+        );
+        addDialogLayout.setVerticalGroup(
+            addDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(addDialogLayout.createSequentialGroup()
+                .addGap(39, 39, 39)
+                .addGroup(addDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(addDialog_fileNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(addDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(addDialog_fileSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(31, 31, 31)
+                .addGroup(addDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(addDialog_addFileButton)
+                    .addComponent(addDialog_cancelButton))
+                .addContainerGap(49, Short.MAX_VALUE))
+        );
+
+        delDialog.setMaximumSize(new java.awt.Dimension(400, 300));
+        delDialog.setMinimumSize(new java.awt.Dimension(400, 300));
+        delDialog.setResizable(false);
+
+        delDialog_fileNameTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                delDialog_fileNameTextFieldActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setText("File Name");
+
+        delDialog_delFileButton.setText("Delete File");
+        delDialog_delFileButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                delDialog_delFileButtonActionPerformed(evt);
+            }
+        });
+
+        delDialog_cancelButton.setText("Cancel");
+        delDialog_cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                delDialog_cancelButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout delDialogLayout = new javax.swing.GroupLayout(delDialog.getContentPane());
+        delDialog.getContentPane().setLayout(delDialogLayout);
+        delDialogLayout.setHorizontalGroup(
+            delDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(delDialogLayout.createSequentialGroup()
+                .addGap(60, 60, 60)
+                .addGroup(delDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(delDialogLayout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(34, 34, 34)
+                        .addComponent(delDialog_fileNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(delDialogLayout.createSequentialGroup()
+                        .addComponent(delDialog_delFileButton)
+                        .addGap(32, 32, 32)
+                        .addComponent(delDialog_cancelButton)))
+                .addContainerGap(123, Short.MAX_VALUE))
+        );
+        delDialogLayout.setVerticalGroup(
+            delDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(delDialogLayout.createSequentialGroup()
+                .addGap(74, 74, 74)
+                .addGroup(delDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(delDialog_fileNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(31, 31, 31)
+                .addGroup(delDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(delDialog_delFileButton)
+                    .addComponent(delDialog_cancelButton))
+                .addContainerGap(152, Short.MAX_VALUE))
+        );
+
+        editDialog.setMaximumSize(new java.awt.Dimension(400, 300));
+        editDialog.setMinimumSize(new java.awt.Dimension(400, 300));
+        editDialog.setResizable(false);
+
+        jLabel8.setText("New File Size");
+
+        editDialog_editFileButton.setText("Edit File");
+        editDialog_editFileButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editDialog_editFileButtonActionPerformed(evt);
+            }
+        });
+
+        editDialog_cancelButton.setText("Cancel");
+        editDialog_cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editDialog_cancelButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel9.setText("File Name");
+
+        javax.swing.GroupLayout editDialogLayout = new javax.swing.GroupLayout(editDialog.getContentPane());
+        editDialog.getContentPane().setLayout(editDialogLayout);
+        editDialogLayout.setHorizontalGroup(
+            editDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(editDialogLayout.createSequentialGroup()
+                .addGap(60, 60, 60)
+                .addGroup(editDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(editDialogLayout.createSequentialGroup()
+                        .addGroup(editDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel8))
+                        .addGap(26, 26, 26)
+                        .addGroup(editDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(editDialog_fileNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(editDialog_fileSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(editDialogLayout.createSequentialGroup()
+                        .addComponent(editDialog_editFileButton)
+                        .addGap(32, 32, 32)
+                        .addComponent(editDialog_cancelButton)))
+                .addContainerGap(115, Short.MAX_VALUE))
+        );
+        editDialogLayout.setVerticalGroup(
+            editDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(editDialogLayout.createSequentialGroup()
+                .addGap(39, 39, 39)
+                .addGroup(editDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(editDialog_fileNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(editDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(editDialog_fileSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(31, 31, 31)
+                .addGroup(editDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(editDialog_editFileButton)
+                    .addComponent(editDialog_cancelButton))
+                .addContainerGap(149, Short.MAX_VALUE))
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -105,24 +371,24 @@ public class MainWindow extends javax.swing.JFrame {
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
         );
 
-        jButton1.setText("Add");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        add.setText("Add");
+        add.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                addActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Delete");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        del.setText("Delete");
+        del.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                delActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Edit");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        edit.setText("Edit");
+        edit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                editActionPerformed(evt);
             }
         });
 
@@ -146,11 +412,11 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(add, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2)
+                        .addComponent(del)
                         .addGap(15, 15, 15)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(edit, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(14, 14, 14)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -167,9 +433,9 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(add)
+                    .addComponent(del)
+                    .addComponent(edit))
                 .addGap(35, 35, 35)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -233,18 +499,84 @@ public class MainWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+        GridPanel gp = (GridPanel) jPanel1;
+        //gp.updateGrid(sectors);
+        addDialog.setVisible(true);
+//        if (file.getFileSize() <= getAvailableSize()) {
+//            
+//        }
+    }//GEN-LAST:event_addActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void delActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+        delDialog.setVisible(true);
+    }//GEN-LAST:event_delActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+        editDialog.setVisible(true);
+    }//GEN-LAST:event_editActionPerformed
 
+    private void addDialog_addFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDialog_addFileButtonActionPerformed
+        // TODO add your handling code here:
+        addDialog.setVisible(false);
+        addDialog.dispose();
+        addDialog_fileNameTextField.setText("");
+        addDialog_fileSizeTextField.setText("");
+    }//GEN-LAST:event_addDialog_addFileButtonActionPerformed
+
+    private void addDialog_cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDialog_cancelButtonActionPerformed
+        // TODO add your handling code here:
+        addDialog.setVisible(false);
+        addDialog.dispose();
+        addDialog_fileNameTextField.setText("");
+        addDialog_fileSizeTextField.setText("");
+    }//GEN-LAST:event_addDialog_cancelButtonActionPerformed
+
+    private void delDialog_delFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delDialog_delFileButtonActionPerformed
+        // TODO add your handling code here:
+        delDialog.setVisible(false);
+        delDialog.dispose();
+        delDialog_fileNameTextField.setText("");
+    }//GEN-LAST:event_delDialog_delFileButtonActionPerformed
+
+    private void delDialog_cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delDialog_cancelButtonActionPerformed
+        // TODO add your handling code here:
+        delDialog.setVisible(false);
+        delDialog.dispose();
+        delDialog_fileNameTextField.setText("");
+    }//GEN-LAST:event_delDialog_cancelButtonActionPerformed
+
+    private void editDialog_editFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editDialog_editFileButtonActionPerformed
+        // TODO add your handling code here:
+        editDialog.setVisible(false);
+        editDialog.dispose();
+        editDialog_fileNameTextField.setText("");
+        editDialog_fileSizeTextField.setText("");
+    }//GEN-LAST:event_editDialog_editFileButtonActionPerformed
+
+    private void editDialog_cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editDialog_cancelButtonActionPerformed
+        // TODO add your handling code here:
+        editDialog.setVisible(false);
+        editDialog.dispose();
+        editDialog_fileNameTextField.setText("");
+        editDialog_fileSizeTextField.setText("");
+    }//GEN-LAST:event_editDialog_cancelButtonActionPerformed
+
+    private void delDialog_fileNameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delDialog_fileNameTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_delDialog_fileNameTextFieldActionPerformed
+    
+    private void updateFilesTable() {
+        //DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+    }
+    
+    private void updateDirectoryInfo() {
+        
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -274,6 +606,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new MainWindow().setVisible(true);
             }
@@ -281,13 +614,32 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton add;
+    private javax.swing.JDialog addDialog;
+    private javax.swing.JButton addDialog_addFileButton;
+    private javax.swing.JButton addDialog_cancelButton;
+    private javax.swing.JTextField addDialog_fileNameTextField;
+    private javax.swing.JTextField addDialog_fileSizeTextField;
+    private javax.swing.JButton del;
+    private javax.swing.JDialog delDialog;
+    private javax.swing.JButton delDialog_cancelButton;
+    private javax.swing.JButton delDialog_delFileButton;
+    private javax.swing.JTextField delDialog_fileNameTextField;
+    private javax.swing.JButton edit;
+    private javax.swing.JDialog editDialog;
+    private javax.swing.JButton editDialog_cancelButton;
+    private javax.swing.JButton editDialog_editFileButton;
+    private javax.swing.JTextField editDialog_fileNameTextField;
+    private javax.swing.JTextField editDialog_fileSizeTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
     private javax.swing.JMenu jMenu5;
@@ -298,7 +650,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JPanel jPanel1;
+    protected javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;

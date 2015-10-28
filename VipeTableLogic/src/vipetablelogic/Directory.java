@@ -6,6 +6,7 @@
 package vipetablelogic;
 
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -13,18 +14,18 @@ import java.util.ArrayList;
  */
 public class Directory {
     
-    ArrayList<VipeFile> file;
+    ArrayList<VipeFile> files;
     int[] sectors = new int[600];
     
     
     
     public Directory(ArrayList<VipeFile> fs, int[] sc) {
-        file = fs;
+        files = fs;
         sectors = sc;
     }
 
     public ArrayList<VipeFile> getFile() {
-        return file;
+        return files;
     }
 
     public int[] getSectors() {
@@ -32,7 +33,7 @@ public class Directory {
     }
 
     public void setFile(ArrayList<VipeFile> file) {
-        this.file = file;
+        this.files = file;
     }
 
     public void setSectors(int[] sectors) {
@@ -57,24 +58,24 @@ public class Directory {
     }
 
     public void addFile(VipeFile file) {
-        ArrayList<Chunk> files = new ArrayList<>();
-        int start = 0;
-        int end = 0;
-        int size = file.getFileSize();
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < sectors.length; j++) {
-                if (sectors[j] == 0) {
-                    if (sectors[j + 1] != 0) {
-                        end = j;
-                        files.add(new Chunk(start + 1, end + 1));
+            ArrayList<Chunk> list = new ArrayList<>();
+            int start = 0;
+            int end = 0;
+            int size = file.getFileSize();
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < sectors.length; j++) {
+                    if (sectors[j] == 0) {
+                        if (sectors[j + 1] != 0) {
+                            end = j;
+                            list.add(new Chunk(start + 1, end + 1));
+                        }
+                        sectors[j] = file.getFileID();
+                        break;
                     }
-                sectors[j] = file.getFileID();
-                break;
                 }
             }
-        }
-        file.setChunks(files);
-        this.file.add(file);
+            file.setChunks(list);
+            this.files.add(file);
     }
     
     public void deleteFile(int ID) {
@@ -87,16 +88,25 @@ public class Directory {
     
     public void editFile(int ID, int size) {
         int overflow = 0;
-        for (int i = 0; i < file.size(); i++) {
-            if (file.get(i).getFileID() == ID) {
+        for (int i = 0; i < files.size(); i++) {
+            if (files.get(i).getFileID() == ID) {
                 return;
             }
-            if (file.get(i).getFileSize() > size) {
-                overflow = file.get(i).getFileSize() - size;
+            if (files.get(i).getFileSize() > size) {
+                overflow = files.get(i).getFileSize() - size;
                 for (int j = 0; j < overflow; j++) {
-                    sectors[file.get(i).getChunk(0).getStartIndex() + j] = 0;
+                    sectors[files.get(i).getChunk(0).getStartIndex() + j] = 0;
                 }
             }
         }
+    }
+    
+    private int getAvailableSize() {
+            //returns the total number of unmarked sectors
+        int unmarked = 0;
+        for (int sector: getSectors())
+            if (sector == 0)
+                unmarked++;
+        return unmarked;
     }
 }
