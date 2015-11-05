@@ -9,28 +9,28 @@ package vipetablelogic;
  *
  * @author Steven
  */
-public class Chunk {
-    int startIndex;
-    int endIndex;
+public class Chunk {    //default constructor
+    int startIndex;     //instantiates variable for where chunck starts
+    int endIndex;       //instantiates variable for where chunk ends
     
-    public Chunk(int s, int e) {
-        startIndex = s;
-        endIndex = e;
+    public Chunk(int s, int e) {    //constructor with two int parameters for start/end
+        startIndex = s;             //sets startIndex variable to parameter s
+        endIndex = e;               //sets endIndex variable to parameter e
     }
     
-    public int getStartIndex() {
+    public int getStartIndex() {    //get method that returns startIndex variable
         return startIndex;
     }
 
-    public int getEndIndex() {
+    public int getEndIndex() {  //get method that returns endIndex variable
         return endIndex;
     }
     
-    public void setStartIndex(int startIndex) {
+    public void setStartIndex(int startIndex) { //resets startIndex to parameter
         this.startIndex = startIndex;
     }
 
-    public void setEndIndex(int endIndex) {
+    public void setEndIndex(int endIndex) {     //resets endIndex to parameter
         this.endIndex = endIndex;
     }
     
@@ -44,6 +44,6 @@ public class Chunk {
         */
         
         //string output for chunk class
-        return "[" + startIndex + "-" + endIndex + "]";
+        return "[" + startIndex + "-" + endIndex + "]"; //returns chunk data (start/end) in [start-end] notation
     }
 }
